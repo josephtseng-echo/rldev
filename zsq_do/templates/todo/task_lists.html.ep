@@ -1,0 +1,175 @@
+% layout 'todo', title => 'abc';
+% content left_menu_active3 => 'class="active"';
+
+<div class="navbar-line"><hr/></div>
+
+<button onClick="func_create();" class="btn btn-primary">新建任务</button> 
+<div class="modal fade" id="task_create_id" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> 
+                <h4 class="modal-title">新建任务</h4>
+            </div>
+            <div class="modal-body">
+              <form role="form" id="project_form">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="task_name"
+                           name="task_name" placeholder="任务名称">
+                </div>
+				<div class="form-group">
+					<div class='col-xs-4 input-group date' style="float:left;">
+						<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+						<input type='text' id='start_time' name='start_time' class="form-control" placeholder="开始时间"/>
+					</div>
+					<div class='col-xs-4 input-group date' style="float:left;margin-left:30px;">
+						<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+						<input type='text' id='end_time' name='end_time' class="form-control" placeholder="结束时间"/>
+					</div>
+					<div style="clear:both;"></div>
+				</div>				
+              </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="button_save">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped" id="data_lists">
+        <thead>
+            <tr>
+                <th width="25%">任务</th>
+                <th width="25%">创建时间</th>
+	            <th width="25%">项目</th>
+                <th width="25%">状态</th>
+            </tr>
+        </thead>
+        <tbody id="task_lists_table"></tbody>
+    </table>
+</div>
+% content_for js => begin
+//, defaultDate:new Date()
+var datetimepicker_option = {format: 'YYYY-MM-DD'};
+function func_create(){
+	$('#task_create_id').modal('show');
+}
+
+function func_reset_todo_status(obj, id){
+	var task_status_id = $('#task_status_reset_id_'+id).val();
+	var task_status_text = $('#task_status_reset_id_'+id+' option:selected').text();
+	$.ajax({
+		type:'POST',
+		url:'todo/api/task/status',
+		data: 'id='+id+'&status='+task_status_id,
+		dataType:'json',
+		success: function (data) {
+				var h = '';
+				h += '<a href="javascript:void(0);"'
+					+ ' onclick="func_show_option(this, '+task_status_id+','+id+');">';
+				if (task_status_id == 0){
+						h += '<span style="color:red">进行中</span>';
+					}
+				if (task_status_id == 1){
+						h += '<span style="">已完成</span>';
+					}
+				if (task_status_id == -1){
+						h += '<span style="">取消</span>';
+					}					
+				$(obj).parent().html(h);
+		}
+	});
+}
+function func_show_option(obj, c, id){
+	var option_str = '';
+	var option_name = new Array();
+	option_name[0] = '取消';
+	option_name[1] = '进行中';
+	option_name[2] = '完成';
+	option_str += '<select id="task_status_reset_id_'+id+'" onchange=func_reset_todo_status(this,'+id+')>';
+	for (var i = 0; i < option_name.length; i++){
+		option_str += '<option value="'+(i-1)+'" ';
+		if(c == (i-1)){
+			option_str += 'selected="selected"';
+		}
+		option_str += '>'+option_name[i]+'</option>';
+	}
+	option_str += '</select>';
+	$(obj).parent().html(option_str);
+}
+
+$(function () {
+    $("#start_time").datetimepicker(datetimepicker_option);
+	$("#end_time").datetimepicker(datetimepicker_option);
+});
+$(document).ready(function(){
+	$("#button_save").click(function () {
+                $.ajax({
+                    //cache: true,
+                    type: "POST",
+                    url: 'todo/api/task',
+                    data: $('#project_form').serialize(),
+                    //async: false,
+					dataType:'json',
+                    success: function (data) {
+                        $('#'+data.focus).focus();
+						$('#task_create_id').modal('hide');
+						$('#task_name').val('');
+						$('#start_time').val('');
+						$('#end_time').val('');
+						window.location.reload();
+                    },
+                    error: function (request) {
+                        //alert("Connection error");
+                    }
+                });
+            });
+	$.ajax({
+	    url : '<%= url_for->base->path('todo/api/task') %>',
+		type:'get',
+		timeout:15000,
+		beforeSend: function(){
+			$('#task_lists_table').html('数据加载中......');
+		},
+	    dataType:'json',
+        success:function(ret){
+            if(ret.data){
+                var d = ret.data;
+                var h = '';
+                for(var i = 0;i < d.length; i++){
+                    h += '<tr>';
+                    h += '<td><a href="<%= url_for->base->path('todo/task/show/') %>'+d[i].tb_id+'">' + d[i].tb_name + '</a></td>';
+                    h += '<td>' + d[i].tb_create_time +'</td>';
+					h += '<td>';
+					if (d[i].tb_level == 0){
+						h += '其他';
+					}else{
+						h += d[i].tb_level;
+					}
+					h += '&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+					h += '<td><a href="javascript:void(0);"'
+						+ ' onclick="func_show_option(this, '+d[i].tb_status+','+d[i].tb_id+');">';
+					if (d[i].tb_status == 0){
+						h += '<span style="color:red">进行中</span>';
+					}
+					if (d[i].tb_status == 1){
+						h += '<span style="">已完成</span>';
+					}
+					if (d[i].tb_status == -1){
+						h += '<span style="">取消</span>';
+					}					
+					h += '</a></td>';
+                    h += '</tr>';
+                }
+                $("#task_lists_table").html(h);
+            }
+        }
+	});
+});
+% end

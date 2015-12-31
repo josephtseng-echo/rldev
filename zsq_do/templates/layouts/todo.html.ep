@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><%= title %></title>
+<link rel="stylesheet" href="<%= url_for->base->path('/static/bootstrap/3.3.5/css/bootstrap.min.css') %>">
+<link rel="stylesheet" href="<%= url_for->base->path('/static/bootstrap/3.3.5/css/bootstrap-datetimepicker.min.css') %>">
+<link rel="stylesheet" href="<%= url_for->base->path('/static/datatables/1.10.9/css/dataTables.bootstrap.min.css') %>">
+<link rel="stylesheet" href="<%= url_for->base->path('/static/jquery-ui/1.11.4/jquery-ui.min.css') %>">
+<link rel="stylesheet" href="<%= url_for->base->path('/static/css/front_base.css') %>">
+</head>
+<body>
+	<div class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">My Test</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">josephzeng</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-1 sidebar">
+          <ul class="nav nav-sidebar">
+            <li <%= content 'left_menu_active1' %>><a href="<%= url_for->base->path('/todo') %>">主页</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li <%= content 'left_menu_active2' %>><a href="<%= url_for->base->path('/todo/project') %>">项目</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+             <li <%= content 'left_menu_active3' %>><a href="<%= url_for->base->path('/todo/task') %>">任务</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-10 col-sm-offset-3 col-md-10 col-md-offset-1">
+            <%= content %>        	           
+        </div>
+      </div>
+    </div>
+<script src="<%= url_for->base->path('/static/jquery/1.11.3/jquery.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/jquery-ui/1.11.4/jquery-ui.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/bootstrap/3.3.5/js/bootstrap.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/bootstrap/3.3.5/js/moment.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/bootstrap/3.3.5/js/bootstrap-datetimepicker.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/datatables/1.10.9/js/jquery.dataTables.min.js') %>"></script>
+</body>
+</html>
+<script type="text/javascript">
+<%= content 'js' %>
+</script>

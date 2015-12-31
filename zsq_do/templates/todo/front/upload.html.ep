@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>test</title>
+<link rel="stylesheet" href="static/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/css/front_base.css">
+</head>
+<body>
+<script src="static/jquery/1.11.3/jquery.min.js"></script>
+<script src="static/jquery-ui/1.11.4/jquery-ui.min.js"></script>
+<script src="static/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!DOCTYPE html>
+   <form action='/upload' method='post' enctype='multipart/form-data'>
+   Select Files: <input type='file' name='files' multiple=1><br/>
+  <!-- Select Files: <input type='file' name='files' multiple=1><br/>-->
+   <input type="submit" >
+   </form>
+
+<br/>
+<%= $html %>
+</body>
+</html>

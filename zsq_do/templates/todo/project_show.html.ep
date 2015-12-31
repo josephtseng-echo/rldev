@@ -1,0 +1,148 @@
+% layout 'todo', title => 'abc';
+% content left_menu_active2 => 'class="active"';
+<div class="navbar-line"><hr/></div>
+<h3><%= $project_base_row->{pb_name} %></h3>
+<div class="navbar-line"><hr/></div>
+<div>
+  <h4>项目已经开
+    始<span style="color:red"><strong><%= $project_base_row->{start_days} %></strong></span>天</h4>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped" id="data_lists">
+        <thead>
+            <tr>
+                <th width="300px">阶段</th>
+                <th>进度</th>
+                <th width="100px">成员</th>
+            </tr>
+        </thead>
+        <tbody>
+          % foreach (@$project_level_array) {
+          <tr>
+            <td><%= $_->{'pl_name'} %></td>
+            <td></td>
+            <td><a href="javascript:void(0);" onclick="func_edit_user(<%= $project_base_row->{pb_id} %>,<%= $_->{'pl_id'} %>);">编辑</a></td>
+          </tr>
+          % }
+        </tbody>
+    </table>
+</div>
+<div class="modal fade" id="func_edit_user_id" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> 
+                <h4 class="modal-title">编辑成员</h4>
+            </div>
+    <div class="modal-body">
+    <table class="table table-striped">
+        <tbody id="project_form">
+        </tbody>
+    </table>
+	</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="func_search_user_id" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> 
+                <h4 class="modal-title">搜索成员</h4>
+            </div>
+            <div class="modal-body">
+              ddd
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="button_save">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="user_lists_table"></div>
+	% content_for js => begin
+function func_del_user(pb_id, pl_id){
+	alert(pb_id + '#' + pl_id);
+}
+function func_edit_user(pb_id, pl_id){
+	$.ajax({
+	    url : '<%= url_for->base->path('todo/api/user') %>',
+		data: 'pbid=0&plid='+pl_id,
+	    dataType:'json',
+        success:function(ret){
+			if(ret.data){
+				var d = ret.data;
+				//1
+				var hh = '<tr><td><input type="text" id="create_user_name" name="create_user_name"/></td><td><a href="javascript:void(0);" onclick="func_create_user('+pl_id+');">新增成员</a></td></tr>';
+				for(i=0; i < d.length; i++){
+					hh += '<tr><td>' + d[i].ub_loginname;
+					hh += '</td><td><a href="javascript:void(0);"'
+						+ ' onclick="func_del_user('+pb_id+', '+pl_id+');">删除</a></td></tr>';
+				}
+				$("#project_form").html(hh);	   
+		   }
+		}
+	});	
+	$('#func_edit_user_id').modal('show');
+}
+
+function func_search_user(){
+	$('#func_search_user_id').modal('show');
+}
+
+function func_create_user(plid) {
+    var user_name = $.trim($('#create_user_name').val());
+    if(user_name == ''){
+        $('#create_user_name').focus();
+        return 0;
+    }
+    $.ajax({
+        url : '<%= url_for->base->path('todo/api/user/pl/create') %>',
+        type: 'post',
+        data: 'username='+user_name+'&plid='+plid,
+        dataType: 'text',
+        success: function(ret) {
+            alert(ret);
+        }
+    });
+}
+
+$(document).ready(function(){
+
+	$.ajax({
+	    url : '<%= url_for->base->path('todo/api/user') %>',
+		data: 'pbid=<%= $pbid %>',
+	    dataType:'json',
+        success:function(ret){
+			if(ret.data){
+				var d = ret.data;
+				//1
+                var h = '<table class="table"><tbody>';
+				var hh = '<table class="table"><tbody><tr><td><input type="text" id="create_user_name" name="create_user_name"/></td><td><a href="javascript:void(0);">新增成员</a></td></tr>';
+				for(i=0; i < d.length; i++){
+					h += '<tr><td>';
+					h += '' + d[i].ub_loginname + '';
+					if(d[i].pu_is_author == 1){
+						h += '<span style="color:red;margin-left:30px;">负责人';
+					}
+					if(d[i].pu_is_admin == 1){
+						h += '&nbsp;&nbsp;&nbsp;&nbsp;管理员</span>';
+					}
+					h += '</td></tr>';
+					hh += '<tr><td>' + d[i].ub_loginname + '</td>';
+					hh += '<td><a href="#">删除</a></td></tr>';
+				}
+				h += '</tbody></table>';
+				hh += '</tbody></table>';
+				$("#user_lists_table").html(h);
+				$("#project_form").html(hh);				
+	   
+		   }
+		}
+	});
+});
+% end

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><%= title %></title>
+<link rel="stylesheet" href="<%= url_for->base->path('/static/bootstrap/3.3.5/css/bootstrap.min.css') %>">
+<link rel="stylesheet" href="<%= url_for->base->path('/static/bootstrap/3.3.5/css/bootstrap-datetimepicker.min.css') %>">
+<link rel="stylesheet" href="<%= url_for->base->path('/static/datatables/1.10.9/css/dataTables.bootstrap.min.css') %>">
+<link rel="stylesheet" href="<%= url_for->base->path('/static/jquery-ui/1.11.4/jquery-ui.min.css') %>">
+<link rel="stylesheet" href="<%= url_for->base->path('/static/css/front_base.css') %>">
+</head>
+<body>
+  <%= content %>
+<script src="<%= url_for->base->path('/static/jquery/1.11.3/jquery.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/jquery-ui/1.11.4/jquery-ui.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/bootstrap/3.3.5/js/bootstrap.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/bootstrap/3.3.5/js/moment.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/bootstrap/3.3.5/js/bootstrap-datetimepicker.min.js') %>"></script>
+<script src="<%= url_for->base->path('/static/datatables/1.10.9/js/jquery.dataTables.min.js') %>"></script>
+</body>
+</html>
+<script type="text/javascript">
+<%= content 'js' %>
+</script>

@@ -1,0 +1,19 @@
+% layout 'default', title => '请使用OPD帐号登陆';
+% my $var = $self->stash('var');
+<div class="table-responsive">
+    <table class="table" align="center"style="width:400px; ">
+        <tbody>
+            <tr>
+                <td align="center"><%= $var->{'msg'} %></td>
+            </tr> 
+            <tr>
+                <td align="center"><a href="">登陆</a></td>
+            </tr>                      
+        </tbody>
+    </table>
+</div>
+% content_for js => begin
+//
+% end
+
+
